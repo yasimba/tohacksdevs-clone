@@ -1,0 +1,51 @@
+version: '3'
+services:
+  client:
+    restart: always
+    build: ./client
+    command: npm run start
+    volumes:
+      - ./client:/usr/client
+      - /usr/client/node_modules
+    ports:
+      - "3001:3001"   
+    environment:           
+      REACT_APP_WEB_APP_URL: ${REACT_APP_WEB_APP_URL}
+      REACT_APP_API_URL: ${REACT_APP_API_URL}
+      REACT_APP_FIREBASE_API_KEY: ${REACT_APP_FIREBASE_API_KEY}
+      REACT_APP_FIREBASE_AUTH_DOMAIN: ${REACT_APP_FIREBASE_AUTH_DOMAIN}
+      REACT_APP_FIREBASE_DATABASE_URL: ${REACT_APP_FIREBASE_DATABASE_URL}
+      REACT_APP_FIREBASE_PROJECT_ID: ${REACT_APP_FIREBASE_PROJECT_ID}
+      REACT_APP_FIREBASE_STORAGE_BUCKET: ${REACT_APP_FIREBASE_STORAGE_BUCKET}
+      REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${REACT_APP_FIREBASE_MESSAGING_SENDER_ID}
+      REACT_APP_FIREBASE_APP_ID: ${REACT_APP_FIREBASE_APP_ID}
+  server:
+    restart: always
+    build: ./server
+    command: npm run dev
+    volumes:
+      - ./server:/usr/server/
+      - /usr/server/node_modules   
+    ports:
+      - "3002:3002"      
+    depends_on:
+      - postgres
+    environment:      
+      PORT: ${PORT}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: host.docker.internal   
+      DB_PASSWORD: ${DB_PASSWORD}  
+  postgres:
+    restart: always
+    image: postgres:9.6.2-alpine
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5434:5432"
+    environment:            
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_PASSWORD: ${PG_PASS}
+      
