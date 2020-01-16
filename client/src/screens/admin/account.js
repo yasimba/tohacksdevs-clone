@@ -5,7 +5,7 @@ import '../styles/registration.css';
 export default function Account(){
     const logout = () => {
         fb.auth().signOut().then(function() {            
-            window.location.href=`${process.env.REACT_APP_WEB_APP_URL}/`
+            window.location.href=`${process.env.REACT_APP_WEB_APP_URL}/registration/DEFAULT`
           }).catch(function(error) {   
               alert(error)         
           });

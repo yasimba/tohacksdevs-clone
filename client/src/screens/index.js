@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route, BrowserRouter} from 'react-router-dom';
-import AdminApplications from './admin/admin_applications'
+import HackathonApplications from './admin/hackathon_applications'
 import  Registration from './web/registration'
 import Login from './auth/login';
 import Account from './admin/account'
+import Hackathon from './admin/hackathon'
 import fb from '../firebaseConfig';
 import Navbar from './navbar';
+
+
+function notExists(){
+  return(
+    <h1>Page not found</h1>
+  )
+}
 
 function Navigation(){
   const[isLoggedIn,setIsLoggedIn]=useState(false)
@@ -21,6 +29,7 @@ function Navigation(){
   },[])
 
 
+
   console.log(isLoggedIn)
   if(isLoggedIn){        
     return(
@@ -28,9 +37,10 @@ function Navigation(){
       <div>
       <Navbar />
       <Switch>    
-          <Route path="/admin" exact component={AdminApplications} />                              
+          <Route path="/admin" exact component={HackathonApplications} />                              
           <Route path="/account" exact component={Account} />                    
-          <Route path="/" component={AdminApplications} />            
+          <Route path="/hackathon" exact component={Hackathon} />   
+          <Route path="/" component={HackathonApplications} />            
     </Switch>
     </div>
     </BrowserRouter>
@@ -40,9 +50,9 @@ function Navigation(){
         <BrowserRouter>
         <div>        
         <Switch>                
-            <Route path="/registration" exact component={Registration} />          
-            <Route path="/login" exact component={Login} />          
-            <Route path="/" component={Registration} />          
+            <Route path="/registration/:reg_id" exact component={Registration} />          
+            <Route path="/login" exact component={Login} />                        
+            <Route component={notExists} />      
       </Switch>
       </div>
       </BrowserRouter>

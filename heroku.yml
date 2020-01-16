@@ -7,7 +7,6 @@ setup:
       client: client/Dockerfile
       server: server/Dockerfile
   release:
-    command:
-      - ./deployment-tasks.sh
+    command:      
     image: client
     image: server

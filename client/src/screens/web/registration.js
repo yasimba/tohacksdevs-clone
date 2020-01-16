@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import '../styles/registration.css';
 import {  storageRef } from '../../firebaseConfig'
 
-export default function Registration() {
+export default function Registration({match}) {
   const[firstName, setFirstName]=useState('')      
   const[lastName, setLastName]=useState('')
   const[birthDate, setBirthDate]=useState('')
@@ -35,6 +35,11 @@ export default function Registration() {
     ,prevProj,potentialProj,questions,likedFbPage
   ) => {
 
+     if(resumeUrl ==  ""){
+       alert("Click upload button after selecting resume")
+       return
+     }
+
 if(
         firstName ==  "" |
         lastName ==  "" | 
@@ -49,8 +54,7 @@ if(
         major ==  "" |shirtSize ==  "" |
         firstHackathon ==  "" |
         codingLanguages ==  "" |skills ==  "" |
-        webLink ==  "" |linkedInLink ==  "" |
-        resumeUrl ==  "" |
+        webLink ==  "" |linkedInLink ==  "" |        
         hopeToGain
          ==  "" |prevProj ==  "" |
          potentialProj ==  "" |questions ==  "" |
@@ -85,7 +89,8 @@ if(
         prev_proj : prevProj,
         potential_proj  : potentialProj,
         questions  : questions,
-        liked_fb_page  : likedFbPage,      
+        liked_fb_page  : likedFbPage,    
+        reg_id: match.params.reg_id//TODO: check first that the reg is is valid
     })
   })
     .then(response => response.json())
@@ -116,7 +121,7 @@ if(
       ref.put(file).then(function(snapshot) {
         snapshot.ref.getDownloadURL().then(function(downloadURL) {
           setResumeURL(downloadURL)
-///          alert("Uploded successfully")
+          alert("Uploded  resume")
           console.log("File available at", downloadURL);                
       }).catch(error => {
         console.log(error);
@@ -137,7 +142,7 @@ if(
         value={firstName}       
         onChange={e => setFirstName(e.target.value)}        
         required
-        ></input>
+        ></input>        
 
 <input className = "input"
          placeholder='Last Name'

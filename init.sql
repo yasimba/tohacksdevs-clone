@@ -23,18 +23,32 @@ CREATE TABLE IF NOT EXISTS applicants (
 	potential_proj text NOT NULL,
 	questions text NOT NULL,
 	liked_fb_page text NOT NULL,
+	reg_id text NOT NULL,
+	PRIMARY KEY( id )
+);
+
+CREATE TABLE IF NOT EXISTS hackathon (
+    id serial,    
+    name text NOT NULL,
+	location text NOT NULL,
+	description text NOT NULL,
+	hackthon_date date NOT NULL ,
+	registration_id text NOT NULL,
+	PRIMARY KEY( id )
+);
+
+CREATE TABLE IF NOT EXISTS accepted (
+    id serial,
+    applicant_id integer REFERENCES applicants(id) NOT NULL,
+	hackathon_registration_id text,
+	auth_code text NOT NULL,
 	PRIMARY KEY( id )
 );
 
 
-CREATE TABLE hackathon (
+CREATE TABLE IF NOT EXISTS  shortlist (
     id serial,
     applicant_id integer REFERENCES applicants(id) NOT NULL,
-    name text NOT NULL
-);
-
-
-CREATE TABLE  shortlist (
-    id serial,
-    applicant_id integer REFERENCES applicants(id) NOT NULL    
+	hackathon_registration_id text,
+	PRIMARY KEY( id )   
 );

@@ -26,20 +26,10 @@ let data = {
     "status": 400        
 }
 
-/*
-app.get('/stats/',(req, res) => {
-    let stats = req.query.stats.split((","))
-    stats.forEach(stat=>{
-        console.log(stat)
-    })    
-    res.send("")
-})
-*/
-
 app.get('/applicants', (req, res) => {   
     pg.query('select * from applicants a where a.id \
-        not in (select h.applicant_id from hackathon h where\
-        h.applicant_id = a.id);\
+        not in (select acc.applicant_id from accepted acc where\
+        acc.applicant_id = a.id);\
          ')
     .then((response)=> {
         data.status = 200
@@ -51,26 +41,13 @@ app.get('/applicants', (req, res) => {
     });
 })
 
-app.get('/stats',(req, res)=>{
-    let shirt_size = 'Small'
-    pg.query('select count(*) from applicants a\
-    a.shirt_size = $1\);\
-    ',[shirt_size])
-    .then((response)=> {
-        data.status = 200
-        data.payload = response.rows
-        res.send(data)
-    }).catch(error => {            
-        data.payload = error
-        res.send(data)
-    });
-})
 
 
 app.post('/action', (req, res) => {   
     let action = req.body.action;
     let id = req.body.id;
-    let hackathon_name = req.body.hackathon_name    
+    let hackathon_registration_id = req.body. hackathon_registration_id
+    let auth_code = req.body.auth_code
     let email = req.body.email
     let payload = {}
     
@@ -87,11 +64,10 @@ app.post('/action', (req, res) => {
                 data.payload = "Unable to delete applicant"
                 res.send(data)
             }) 
-            break;
-            
+            break;            
             case "accept":
-                pg.query('INSERT INTO hackathon \
-                 (applicant_id, name) VALUES ($1,$2)',[id, hackathon_name])
+                pg.query('INSERT INTO accepted \
+                 (applicant_id, hackathon_registration_id, auth_code) VALUES ($1,$2, $3)',[id,  hackathon_registration_id, auth_code])
                 .then((response)=> {
                     const msg = {
                         to: email,
@@ -108,26 +84,11 @@ app.post('/action', (req, res) => {
                     res.send(data)
                 }) 
                 break;
-
-
-            case "shortlist":
-                pg.query('INSERT INTO shortlist \
-                 (applicant_id) VALUES $1',[id])
-                .then((response)=> {
-                    data.status = 200
-                    data.payload = "success"
-                    res.send(data)
-                }).catch(error => {            
-                    data.payload = "Unable to shortlist"
-                    res.send(data)
-                }) 
-                break;    
         default:
             break;
     }
    
 })
-
 
 
 app.post('/register', (req, res) => {    
@@ -154,6 +115,7 @@ app.post('/register', (req, res) => {
 	let potential_proj = req.body.potential_proj
 	let questions = req.body.questions
     let liked_fb_page = req.body.liked_fb_page
+    let reg_id = req.body.reg_id
         pg.query(
             'SELECT COUNT (*) FROM applicants a where a.email = $1'
             ,[email])
@@ -166,14 +128,14 @@ app.post('/register', (req, res) => {
                     'INSERT INTO applicants(first_name,last_name,birth_date, email,phone_number,\
                         gender,race,school,current_level,graduation_year, major, shirt_size,\
                         first_hackathon, coding_languages,skills,web_link, linkedin_link, resume_url,\
-                        hope_to_gain, prev_proj, potential_proj, questions, liked_fb_page\
+                        hope_to_gain, prev_proj, potential_proj, questions, liked_fb_page, reg_id\
                         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,\
-                        $13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23\
+                        $13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24\
                         )'
                     ,[first_name,last_name,birth_date, email,phone_number,
                         gender,race,school,current_level,graduation_year, major, shirt_size,
                         first_hackathon, coding_languages,skills,web_link, linkedin_link, resume_url,
-                        hope_to_gain, prev_proj, potential_proj, questions, liked_fb_page
+                        hope_to_gain, prev_proj, potential_proj, questions, liked_fb_page, reg_id
                     ])
                 .then((response)=>{
                     data.payload = response.rows

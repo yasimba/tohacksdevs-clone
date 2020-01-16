@@ -103,6 +103,18 @@ export default function AdminApplications() {
   }
   /**[END] FILTER FUNCTIONS */
 
+  //https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+  const generateAuthCode = () => {
+    let length = 5;
+    var result = '';
+   var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+  }
+
 
 
   const generateCSV = (data, csvOpt) => {
@@ -153,18 +165,20 @@ export default function AdminApplications() {
     })
    // console.log(toRender)
     setDivSelected(toRender)
-  }
+  }  
 
-  const accept = async (id, email) => {
+  const accept = async (id, email, reg_id) => {
+    let authCode = generateAuthCode()
     await fetch
     (` ${process.env.REACT_APP_API_URL}/action`,{
       method: 'POST',
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: id,
-        hackathon_name: "default",
+        hackathon_registration_id: reg_id,
         action: "accept",
-        email: email
+        email: email,
+        auth_code: authCode
     })
   }).then(response => response.json())
   .then(data => {
@@ -294,7 +308,7 @@ export default function AdminApplications() {
             <p>Major at school: {applicant.major}</p>                        
                             
             <div className = "row">
-                <button className="btn" onClick={() => accept(applicant.id,applicant.email)}>accept</button>
+                <button className="btn" onClick={() => accept(applicant.id,applicant.email, applicant.reg_id)}>accept</button>
                 <button className="btn" onClick={() => reject(applicant.id)}>Reject</button>
                 <button className="btn" onClick={() => shortList(applicant.id)}>Shortlist</button>
             </div>                        
